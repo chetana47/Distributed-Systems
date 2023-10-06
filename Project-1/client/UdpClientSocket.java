@@ -13,9 +13,7 @@ public class UdpClientSocket implements ClientInterface {
   private DatagramPacket dtgPacket;
   private String ipaddr;
   private int portno;
-  private byte[] dataGramPacket =  new byte[512];;
-
-
+  private byte[] dataGramPacket = new byte[512];
   /**
    * Receives a message from the connected server using UDP.
    * Creates a DatagramPacket to receive data, waits for incoming data on the UDP socket,
@@ -28,14 +26,12 @@ public class UdpClientSocket implements ClientInterface {
   public String receiveMessage() throws IOException {
     // Create a DatagramPacket to receive data
     int dgtlen = dataGramPacket.length;
-    dtgPacket = new DatagramPacket(dataGramPacket,dgtlen );
+    dtgPacket = new DatagramPacket(dataGramPacket, dgtlen);
     // Receive data from the server
     UDPSocket.receive(dtgPacket);
     // Convert the received data into a String and return it
     return new String(dtgPacket.getData(), 0, dtgPacket.getLength());
   }
-
-
   /**
    * Sends a message to the connected server using UDP.
    * Converts the provided message into a byte array, creates a DatagramPacket,
@@ -48,9 +44,10 @@ public class UdpClientSocket implements ClientInterface {
   public void sendMessage(String message) throws IOException {
     // Convert the message into a byte array
     dataGramPacket = message.getBytes();
+    int dgtlen = dataGramPacket.length;
     // Create a DatagramPacket with the message data, server IP, and port
-    dtgPacket = new DatagramPacket(dataGramPacket, dataGramPacket.length,
-            InetAddress.getByName(this.ipaddr), this.portno);
+    InetAddress address = InetAddress.getByName(this.ipaddr);
+    dtgPacket = new DatagramPacket(dataGramPacket, dgtlen, address, this.portno);
     // Send the DatagramPacket to the server
     UDPSocket.send(dtgPacket);
   }
@@ -63,7 +60,7 @@ public class UdpClientSocket implements ClientInterface {
    *
    * @param ipaddr The IP address of the server.
    * @param portno The port number on which the server is listening.
-   * @throws SocketException if an error occurs while creating the DatagramSocket.
+   * @throws SocketException      if an error occurs while creating the DatagramSocket.
    * @throws UnknownHostException if the provided server IP address is invalid.
    */
   @Override
