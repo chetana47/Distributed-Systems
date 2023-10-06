@@ -9,11 +9,13 @@ import java.net.UnknownHostException;
 
 
 public class UdpClientSocket implements ClientInterface {
-  private DatagramSocket UDPSocket;
+  private DatagramSocket udpSocket;
   private DatagramPacket dtgPacket;
-  private String ipaddr;
+  private InetAddress address;
+  private String ipaddress;
   private int portno;
-  private byte[] dataGramPacket = new byte[512];
+  private byte[] dataGramPacket;
+
   /**
    * Receives a message from the connected server using UDP.
    * Creates a DatagramPacket to receive data, waits for incoming data on the UDP socket,
@@ -24,13 +26,10 @@ public class UdpClientSocket implements ClientInterface {
    */
   @Override
   public String receiveMessage() throws IOException {
-    // Create a DatagramPacket to receive data
-    int dgtlen = dataGramPacket.length;
-    dtgPacket = new DatagramPacket(dataGramPacket, dgtlen);
-    // Receive data from the server
-    UDPSocket.receive(dtgPacket);
-    // Convert the received data into a String and return it
-    return new String(dtgPacket.getData(), 0, dtgPacket.getLength());
+    dataGramPacket = new byte[512];
+    dtgPacket = new DatagramPacket(dataGramPacket, dataGramPacket.length);
+    udpSocket.receive(dtgPacket);
+    return  new String(dtgPacket.getData(), 0, dtgPacket.getLength());
   }
   /**
    * Sends a message to the connected server using UDP.
@@ -42,35 +41,27 @@ public class UdpClientSocket implements ClientInterface {
    */
   @Override
   public void sendMessage(String message) throws IOException {
-    // Convert the message into a byte array
     dataGramPacket = message.getBytes();
-    int dgtlen = dataGramPacket.length;
-    // Create a DatagramPacket with the message data, server IP, and port
-    InetAddress address = InetAddress.getByName(this.ipaddr);
-    dtgPacket = new DatagramPacket(dataGramPacket, dgtlen, address, this.portno);
-    // Send the DatagramPacket to the server
-    UDPSocket.send(dtgPacket);
+    dtgPacket = new DatagramPacket(dataGramPacket, dataGramPacket.length, InetAddress.getByName(this.ipaddress), this.portno);
+    udpSocket.send(dtgPacket);
   }
-
-
   /**
    * Establishes a connection to the server using UDP.
    * Initializes a new DatagramSocket for communication with the server
    * and sets the destination IP address and port number.
    *
-   * @param ipaddr The IP address of the server.
+   * @param ipaddress The IP address of the server.
    * @param portno The port number on which the server is listening.
    * @throws SocketException      if an error occurs while creating the DatagramSocket.
    * @throws UnknownHostException if the provided server IP address is invalid.
    */
   @Override
-  public void connectToServer(String ipaddr, int portno) throws SocketException, UnknownHostException {
-    // Set the port number and IP address for the server connection and Create a new DatagramSocket for UDP communication
+  public void connectToServer(String ipaddress, int portno) throws SocketException, UnknownHostException {
+    udpSocket = new DatagramSocket();
     this.portno = portno;
-    UDPSocket = new DatagramSocket();
-    this.ipaddr = ipaddr;
+    this.ipaddress = ipaddress;
+    address = InetAddress.getByName("localhost");
   }
-
 
   /**
    * Closes the connection to the server by closing the UDP socket.
@@ -81,7 +72,7 @@ public class UdpClientSocket implements ClientInterface {
    */
   @Override
   public void closeConnection() {
-    UDPSocket.close();
+    udpSocket.close();
   }
 
 }
