@@ -13,9 +13,6 @@ public class TcpHandler implements ServerInterface {
   private DataInputStream serverIn = null;
   private DataOutputStream serverOut = null;
 
-  public TcpHandler() {
-  }
-
   @Override
   public String startServer(int port) throws IOException {
     serverSocket = new ServerSocket(port);
@@ -39,13 +36,13 @@ public class TcpHandler implements ServerInterface {
   @Override
   public String receive() throws IOException {
     serverIn = new DataInputStream(tcpSocket.getInputStream());
-    String line = serverIn.readUTF();
-    return line;
+    return serverIn.readUTF();
   }
 
   @Override
   public String getClientIp() {
-    return tcpSocket.getInetAddress().toString();
+    String addr = tcpSocket.getInetAddress().toString();
+    return addr;
   }
 }
 
