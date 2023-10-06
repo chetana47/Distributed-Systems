@@ -1,32 +1,21 @@
 package server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-/**
- * A Java class implementing the ServerInterface for TCP socket communication.
- */
+import java.io.DataInputStream;
+
+
 public class TcpHandler implements ServerInterface {
   private Socket tcpSocket = null;
   private ServerSocket serverSocket = null;
   private DataInputStream serverIn = null;
   private DataOutputStream serverOut = null;
 
-  /**
-   * Default constructor for the SocketTCPServer class.
-   */
   public TcpHandler() {
   }
 
-  /**
-   * Starts the TCP server on the specified port and waits for client connections.
-   *
-   * @param port The port number on which to start the server.
-   * @return The IP address of the connected client as a String.
-   * @throws IOException If there is an issue with server initialization or accepting connections.
-   */
   @Override
   public String startServer(int port) throws IOException {
     serverSocket = new ServerSocket(port);
@@ -34,36 +23,6 @@ public class TcpHandler implements ServerInterface {
     return tcpSocket.getInetAddress().toString();
   }
 
-  /**
-   * Sends a message to the connected client using TCP.
-   *
-   * @param message The message to be sent to the client.
-   * @throws IOException If there is an issue sending the message.
-   */
-  @Override
-  public void send(String message) throws IOException {
-    serverOut = new DataOutputStream(tcpSocket.getOutputStream());
-    serverOut.writeUTF(message);
-  }
-
-  /**
-   * Receives a message from the connected client using TCP.
-   *
-   * @return The received message as a String.
-   * @throws IOException If there is an issue receiving the message.
-   */
-  @Override
-  public String receive() throws IOException {
-    serverIn = new DataInputStream(tcpSocket.getInputStream());
-    String line = serverIn.readUTF();
-    return line;
-  }
-
-  /**
-   * Closes the connection to the client by closing streams and the socket.
-   *
-   * @throws IOException If there is an issue closing the connection.
-   */
   @Override
   public void closeConnection() throws IOException {
     serverIn.close();
@@ -71,11 +30,19 @@ public class TcpHandler implements ServerInterface {
     tcpSocket.close();
   }
 
-  /**
-   * Retrieves the IP address of the connected client.
-   *
-   * @return The IP address of the connected client as a String.
-   */
+  @Override
+  public void send(String message) throws IOException {
+    serverOut = new DataOutputStream(tcpSocket.getOutputStream());
+    serverOut.writeUTF(message);
+  }
+
+  @Override
+  public String receive() throws IOException {
+    serverIn = new DataInputStream(tcpSocket.getInputStream());
+    String line = serverIn.readUTF();
+    return line;
+  }
+
   @Override
   public String getClientIp() {
     return tcpSocket.getInetAddress().toString();
