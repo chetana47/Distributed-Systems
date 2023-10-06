@@ -84,6 +84,12 @@ public class  ClientApp {
     }
   }
 
+  /**
+   * Prepopulates values by sending messages with timestamps and receiving and logging responses.
+   *
+   * @throws IOException          if an I/O error occurs while sending or receiving messages.
+   * @throws InterruptedException if the thread is interrupted while sleeping.
+   */
   private static void prepopulateValues() throws IOException, InterruptedException {
     long currentTime = 0;
     String[] values = {"a 1", "b 2", "c 3"};
